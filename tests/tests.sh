@@ -8,9 +8,9 @@ testNothing() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file has CRLF end lines" 1 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    assertEquals "This file has CRLF end lines" 1 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 #All of these does not work with GIT v1.7.1 on Linux
@@ -20,9 +20,12 @@ testGitAttributesLf() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file does not have CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    if [[ `git --version | cut -d '.' -f -2` < 'git version 1.8' ]]; then
+        __shunit_skip=$SHUNIT_TRUE
+    fi
+    assertEquals "This file does not have CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 #All of these does not work with GIT v1.7.1 on Linux
@@ -32,9 +35,12 @@ testGitAttributesAuto() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file does not have CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    if [[ `git --version | cut -d '.' -f -2` < 'git version 1.8' ]]; then
+        __shunit_skip=$SHUNIT_TRUE
+    fi
+    assertEquals "This file does not have CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 testGitConfigEol() {
@@ -42,9 +48,9 @@ testGitConfigEol() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file has CRLF end lines" 1 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    assertEquals "This file has CRLF end lines" 1 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 testGitConfigInput() {
@@ -52,9 +58,9 @@ testGitConfigInput() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 testGitConfigTrue() {
@@ -62,9 +68,9 @@ testGitConfigTrue() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 testGitConfigTrueAndSafe() {
@@ -73,9 +79,9 @@ testGitConfigTrueAndSafe() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 testGitConfigInputAndSafe() {
     git config core.autocrlf input && \
@@ -83,9 +89,9 @@ testGitConfigInputAndSafe() {
     git add -A && git commit -m 'test' &> /dev/null && git push origin test &> /dev/null && \
     git clone $(git config remote.origin.url) tmprepo &> /dev/null && cd tmprepo && \
     git checkout -b test origin/test &> /dev/null && cd ..
-    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
     assertEquals "This file has CR end lines" 1 `file tmprepo/cr.txt | grep -c " CR "`
     assertEquals "This file does not have other then LF end lines" 0 `file tmprepo/lf.txt | grep -c "terminators"`
+    assertEquals "This file has CRLF end lines" 0 `file tmprepo/crlf.txt | grep -c "CRLF"`
 }
 
 . "${0%/*}/base.sh"
